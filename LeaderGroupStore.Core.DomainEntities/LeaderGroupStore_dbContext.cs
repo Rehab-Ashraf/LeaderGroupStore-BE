@@ -19,9 +19,7 @@ namespace LeaderGroupStore.Core.DomainEntities
 
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Product> Products { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<UserRole> UserRoles { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -67,14 +65,6 @@ namespace LeaderGroupStore.Core.DomainEntities
                 entity.Property(e => e.Price).HasMaxLength(128);
             });
 
-            modelBuilder.Entity<Role>(entity =>
-            {
-                entity.ToTable("Role");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(256);
-            });
 
             modelBuilder.Entity<User>(entity =>
             {
@@ -93,25 +83,6 @@ namespace LeaderGroupStore.Core.DomainEntities
 
                 entity.Property(e => e.PhoneNumber).HasMaxLength(128);
             });
-
-            modelBuilder.Entity<UserRole>(entity =>
-            {
-                entity.HasKey(e => new { e.UserId, e.RoleId })
-                    .HasName("PK_dbo.UserRole");
-
-                entity.ToTable("UserRole");
-
-                entity.HasOne(d => d.Role)
-                    .WithMany(p => p.UserRoles)
-                    .HasForeignKey(d => d.RoleId)
-                    .HasConstraintName("FK_dbo.UserRole_dbo.Role_RoleId");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.UserRoles)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK_dbo.UserRole_dbo.User_UserId");
-            });
-
             OnModelCreatingPartial(modelBuilder);
         }
 
