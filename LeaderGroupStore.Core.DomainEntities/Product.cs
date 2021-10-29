@@ -11,7 +11,14 @@ namespace LeaderGroupStore.Core.DomainEntities
         public string Name { get; set; }
         public string Cost { get; set; }
         public string Price { get; set; }
-
+        public DateTime CreatedAt { get; set; }
         public virtual Category Category { get; set; }
+        public Product CreateAt()
+        {
+
+            CreatedAt = DateTime.UtcNow;
+
+            return this;
+        }
     }
 }

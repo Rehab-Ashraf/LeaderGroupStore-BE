@@ -4,14 +4,16 @@ using LeaderGroupStore.Core.DomainEntities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LeaderGroupStore.Core.DomainEntities.Migrations.LeaderGroupStore_db
 {
     [DbContext(typeof(LeaderGroupStore_dbContext))]
-    partial class LeaderGroupStore_dbContextModelSnapshot : ModelSnapshot
+    [Migration("20211029191849_product")]
+    partial class product
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
