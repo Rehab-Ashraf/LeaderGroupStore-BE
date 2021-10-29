@@ -17,8 +17,8 @@ namespace LeaderGroupStore.Core.DomainEntities
         {
         }
 
-        public virtual DbSet<Category> Categories { get; set; }
-        public virtual DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories { get; private set; }
+        public  DbSet<Product> Products { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -41,17 +41,14 @@ namespace LeaderGroupStore.Core.DomainEntities
                 entity.HasIndex(e => e.Name, "UQ_Category_Name")
                     .IsUnique();
 
-                entity.HasIndex(e => e.ProductId, "UQ__Category__B40CC6CCB11C872E")
-                    .IsUnique();
+                
 
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(256);
+                entity.HasMany(c => c.Products);
 
-                entity.HasOne(d => d.Product)
-                    .WithOne(p => p.Category)
-                    .HasForeignKey<Category>(d => d.ProductId)
-                    .HasConstraintName("FK__Category__Produc__300424B4");
+
             });
 
             modelBuilder.Entity<Product>(entity =>
@@ -63,6 +60,9 @@ namespace LeaderGroupStore.Core.DomainEntities
                 entity.Property(e => e.Name).HasMaxLength(256);
 
                 entity.Property(e => e.Price).HasMaxLength(128);
+                entity.HasIndex(e => e.CategoryId, "UQ__Category__B40CC6CCB11C872E")
+                    .IsUnique();
+                entity.HasOne(p => p.Category);
             });
 
 

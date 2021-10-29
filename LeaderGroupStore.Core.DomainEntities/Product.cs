@@ -12,6 +12,7 @@ namespace LeaderGroupStore.Core.DomainEntities
         public string Cost { get; set; }
         public string Price { get; set; }
         public DateTime CreatedAt { get; set; }
+        public int? CategoryId { get; set; }
         public virtual Category Category { get; set; }
         public Product CreateAt()
         {

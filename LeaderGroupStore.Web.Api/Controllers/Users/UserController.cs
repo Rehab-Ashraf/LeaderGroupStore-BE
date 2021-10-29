@@ -9,7 +9,8 @@ using LeaderGroupStore.Models.Users;
 
 namespace LeaderGroupStore.Web.Api.Controllers
 {
-
+    [Route("api/[controller]")]
+    [ApiController]
     public class UserController : Controller
     {
         private readonly IUserService userService;
@@ -28,7 +29,7 @@ namespace LeaderGroupStore.Web.Api.Controllers
         }
 
         [HttpPost]
-        [Route("User/Register")]
+        [Route("Register")]
         public async Task<IActionResult> RegisterAsync([FromBody]  RegisterInputModel model)
         {
             var user = mapper.Map<User>(model);
@@ -46,7 +47,7 @@ namespace LeaderGroupStore.Web.Api.Controllers
         }
 
         [HttpPost]
-        [Route("User/Login")]
+        [Route("Login")]
         public async Task<IActionResult> LoginAsync([FromBody] LoginInputModel model)
         {
             var result = await userService.LoginAsync(model.UserName, model.Password);
