@@ -1,7 +1,10 @@
 using AutoMapper;
 using LeaderGroupStore.Core.DomainEntities;
+using LeaderGroupStore.Repositories.Categories;
 using LeaderGroupStore.Repositories.Users;
+using LeaderGroupStore.Services.Categories;
 using LeaderGroupStore.Services.Users;
+using LeaderGroupStore.Web.Api.Controllers.Categories;
 using LeaderGroupStore.Web.Api.Controllers.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -36,13 +39,17 @@ namespace LeaderGroupStore.Web.Api
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new UsersMapper());
+                mc.AddProfile(new CategoryMapper());
             });
+
 
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICategoryService, CategoriesService>();
+            services.AddScoped<ICategoriesRepostiory, CategoriesRepository>();
             services.AddControllers();
             var connectionString = Configuration.GetConnectionString("LeaderGroupDbConextion");
             services.AddDbContext<LeaderGroupStore_dbContext>(options => options.UseSqlServer(connectionString).EnableSensitiveDataLogging());
