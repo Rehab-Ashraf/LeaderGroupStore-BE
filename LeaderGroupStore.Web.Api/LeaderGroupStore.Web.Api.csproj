@@ -5,15 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.20" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.11">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LeaderGroupStore.Core.DomainEntities\LeaderGroupStore.Core.DomainEntities.csproj" />
+    <ProjectReference Include="..\LeaderGroupStore.Models\LeaderGroupStore.Models.csproj" />
+    <ProjectReference Include="..\LeaderGroupStore.Services\LeaderGroupStore.Services.csproj" />
   </ItemGroup>
 
 
