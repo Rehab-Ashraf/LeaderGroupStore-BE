@@ -2,14 +2,14 @@
 using LeaderGroupStore.Core.DomainEntities;
 using LeaderGroupStore.Models.Categories;
 using LeaderGroupStore.Services.Categories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace LeaderGroupStore.Web.Api.Controllers.Categories
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : Controller
@@ -21,7 +21,7 @@ namespace LeaderGroupStore.Web.Api.Controllers.Categories
             this.mapper = mapper;
             this.categoryService = categoryService;
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddCategoryAsync([FromBody] CategoryInputModel model)
         {
@@ -34,7 +34,8 @@ namespace LeaderGroupStore.Web.Api.Controllers.Categories
 
             return BadRequest(ModelState);
         }
-
+        
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAllCountriesAsync()
         {
@@ -43,6 +44,7 @@ namespace LeaderGroupStore.Web.Api.Controllers.Categories
        
             return Ok(result);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> UpdateCategoryAsync([FromBody] CategoryInputModel model)
         {

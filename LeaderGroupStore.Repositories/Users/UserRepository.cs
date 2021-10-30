@@ -49,6 +49,12 @@ namespace LeaderGroupStore.Repositories.Users
             return user;
         }
 
+        public async Task<IList<string>> GetUserRoleAsync(User user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles;
+        }
+
         public async Task<bool> LoginAsync(User user, string password)
         {
             bool isRightPassword = await _userManager.CheckPasswordAsync(user, password);
