@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -24,14 +25,14 @@ namespace LeaderGroupStore.Services.Users
         public async Task<string> LoginAsync(string email, string password)
         {
             var user = await userRepo.GetUserByEmailAsync(email);
-
+            var userRole = await userRepo.GetUserRoleAsync(user);
             if (user == null)
                 return null;
 
             bool isRightPassword = await userRepo.LoginAsync(user, password);
             if (isRightPassword)
             {
-                string bearerToken = GenerateToken(user);
+                string bearerToken = GenerateToken(user,userRole);
                 return bearerToken;
             }
 
@@ -44,13 +45,13 @@ namespace LeaderGroupStore.Services.Users
             return result;
         }
 
-        private string GenerateToken(User user)
+        private string GenerateToken(User user, IList<string> roleName)
         {
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[] {
                             new Claim(nameof(user.Id),user.Id),
-
+                            new Claim("Roles", roleName[0]),
                         }),
                 Issuer = configuration["IdentitySettings:Issuer"],
                 Audience = configuration["IdentitySettings:Audience"],

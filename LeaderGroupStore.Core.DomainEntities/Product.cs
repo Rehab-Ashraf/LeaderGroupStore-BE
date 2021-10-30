@@ -21,5 +21,10 @@ namespace LeaderGroupStore.Core.DomainEntities
 
             return this;
         }
+        public Product UpdateCategory(Category category)
+        {
+            Category = category;
+            return this;
+        }
     }
 }

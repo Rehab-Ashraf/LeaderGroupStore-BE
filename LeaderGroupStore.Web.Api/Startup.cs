@@ -1,10 +1,13 @@
 using AutoMapper;
 using LeaderGroupStore.Core.DomainEntities;
 using LeaderGroupStore.Repositories.Categories;
+using LeaderGroupStore.Repositories.Products;
 using LeaderGroupStore.Repositories.Users;
 using LeaderGroupStore.Services.Categories;
+using LeaderGroupStore.Services.Products;
 using LeaderGroupStore.Services.Users;
 using LeaderGroupStore.Web.Api.Controllers.Categories;
+using LeaderGroupStore.Web.Api.Controllers.Products;
 using LeaderGroupStore.Web.Api.Controllers.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -30,6 +33,7 @@ namespace LeaderGroupStore.Web.Api
         }
 
         public IConfiguration Configuration { get; }
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -40,6 +44,7 @@ namespace LeaderGroupStore.Web.Api
             {
                 mc.AddProfile(new UsersMapper());
                 mc.AddProfile(new CategoryMapper());
+                mc.AddProfile(new ProductMapper());
             });
 
 
@@ -50,6 +55,8 @@ namespace LeaderGroupStore.Web.Api
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICategoryService, CategoriesService>();
             services.AddScoped<ICategoriesRepostiory, CategoriesRepository>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductRepository, ProductRepository>();
             services.AddControllers();
             var connectionString = Configuration.GetConnectionString("LeaderGroupDbConextion");
             services.AddDbContext<LeaderGroupStore_dbContext>(options => options.UseSqlServer(connectionString).EnableSensitiveDataLogging());
@@ -78,7 +85,18 @@ namespace LeaderGroupStore.Web.Api
                         ClockSkew = TimeSpan.Zero // remove delay of token when expire
                     };
                 });
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                    builder =>
+                                    {
+                                        builder.WithOrigins("*");
+                                        builder.AllowAnyOrigin();
+                                        builder.AllowAnyHeader();
+                                        builder.AllowAnyMethod();
+
+                                    });
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -136,12 +154,12 @@ namespace LeaderGroupStore.Web.Api
             });
             
             app.UseHttpsRedirection();
-            app.UseCors();
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseRouting();
+
             app.UseAuthentication();
 
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

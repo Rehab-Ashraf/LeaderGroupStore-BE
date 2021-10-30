@@ -10,5 +10,9 @@ namespace LeaderGroupStore.Core.DomainEntities
         public int Id { get; set; }
         public string Name { get; set; }
         public virtual ICollection<Product>  Products { get; set; }
+        public static Category CreateWithId(int id) => new Category
+        {
+            Id = id
+        };
     }
 }
