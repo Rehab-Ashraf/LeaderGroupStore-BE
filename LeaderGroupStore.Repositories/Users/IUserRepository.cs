@@ -11,5 +11,6 @@ namespace LeaderGroupStore.Repositories.Users
         Task<bool> LoginAsync(User user, string password);
         Task<User> GetUserByEmailAsync(string email);
         Task<IList<string>> GetUserRoleAsync(User userId);
+        Task<string>  Logout();
     }
 }

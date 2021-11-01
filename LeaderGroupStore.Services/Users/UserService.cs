@@ -39,20 +39,27 @@ namespace LeaderGroupStore.Services.Users
             return null;
         }
 
+        public async Task<string> Logout()
+        {
+           return await userRepo.Logout();
+        }
+
         public async Task<IdentityResult> RegisterAsync(User model, string password, string roleId)
         {
             var result = await userRepo.AddUserAsync(model, password, roleId);
             return result;
         }
 
-        private string GenerateToken(User user, IList<string> roleName)
+        private  string GenerateToken(User user, IList<string> roleName)
         {
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[] {
                             new Claim(nameof(user.Id),user.Id),
                             new Claim("Roles", roleName[0]),
+                            new Claim(ClaimTypes.Name, user.UserName),
                         }),
+
                 Issuer = configuration["IdentitySettings:Issuer"],
                 Audience = configuration["IdentitySettings:Audience"],
                 Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(configuration["IdentitySettings:TokenExpiryInMinutes"].ToString())),
@@ -64,6 +71,7 @@ namespace LeaderGroupStore.Services.Users
             var bearerToken = tokenHandler.WriteToken(securityToken);
 
             return bearerToken;
+
 
         }
     }
