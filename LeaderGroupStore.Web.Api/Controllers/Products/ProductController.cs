@@ -23,7 +23,8 @@ namespace LeaderGroupStore.Web.Api.Controllers.Products
             this.mapper = mapper;
             this.productService = productService;
         }
-        [Authorize]
+        [Authorize(Policy  = "Admin")]
+        [Authorize(Policy = "Manager")]
         [HttpPost]
         public async Task<IActionResult> AddCategoryAsync([FromBody] ProductInoutModel model)
         {
@@ -35,6 +36,37 @@ namespace LeaderGroupStore.Web.Api.Controllers.Products
             }
 
             return BadRequest(ModelState);
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Customer")]
+        [HttpGet]
+        public async Task<IActionResult> AllCategoriesAsync()
+        {
+            var products = await productService.GetAllProductsAsync();
+            var result = mapper.Map<List<ProductInoutModel>>(products);
+
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "Manager")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateCategoryAsync([FromBody] ProductInoutModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var product = mapper.Map<Product>(model);
+            var result = await productService.UpdateProduct(product);
+            if (result == 0)
+            {
+                return BadRequest($"there is no country with id {product.Id}");
+            }
+            return Ok(result);
         }
 
     }

@@ -6,6 +6,8 @@ using AutoMapper;
 using LeaderGroupStore.Core.DomainEntities;
 using LeaderGroupStore.Services.Users;
 using LeaderGroupStore.Models.Users;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LeaderGroupStore.Web.Api.Controllers
 {
@@ -16,7 +18,7 @@ namespace LeaderGroupStore.Web.Api.Controllers
         private readonly IUserService userService;
         private readonly IMapper mapper;
         private readonly IConfiguration config;
-
+        
         public UserController(
             IConfiguration config,
             IUserService userService,
@@ -27,7 +29,7 @@ namespace LeaderGroupStore.Web.Api.Controllers
             this.userService = userService;
             this.config = config;
         }
-
+        [AllowAnonymous]
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> RegisterAsync([FromBody]  RegisterInputModel model)
@@ -47,6 +49,7 @@ namespace LeaderGroupStore.Web.Api.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("Login")]
         public async Task<IActionResult> LoginAsync([FromBody] LoginInputModel model)
         {
@@ -56,9 +59,20 @@ namespace LeaderGroupStore.Web.Api.Controllers
             {
                 return BadRequest("Incorrect Username or Password");
             }
-
-            return Ok( result );
+            var token = new
+            {
+                data = result
+            };
+            return Ok( token );
             
+        }
+
+        [HttpPost]
+        [Route("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await userService.Logout();
+            return Ok();
         }
 
     }

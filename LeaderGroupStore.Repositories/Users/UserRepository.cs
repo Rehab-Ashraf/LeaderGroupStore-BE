@@ -15,7 +15,6 @@ namespace LeaderGroupStore.Repositories.Users
     {
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-        private readonly LeaderGroupStore_dbContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
         public UserRepository(LeaderGroupStore_dbContext context, UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager,
@@ -59,6 +58,11 @@ namespace LeaderGroupStore.Repositories.Users
         {
             bool isRightPassword = await _userManager.CheckPasswordAsync(user, password);
             return isRightPassword;
+        }
+        public async Task<string> Logout()
+        {
+             await _signInManager.SignOutAsync( );
+            return "Loged out";
         }
     }
 }

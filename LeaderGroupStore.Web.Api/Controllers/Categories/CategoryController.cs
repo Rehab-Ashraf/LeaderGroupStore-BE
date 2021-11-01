@@ -21,7 +21,7 @@ namespace LeaderGroupStore.Web.Api.Controllers.Categories
             this.mapper = mapper;
             this.categoryService = categoryService;
         }
-        [Authorize]
+        [Authorize(Policy = ("Admin"))]
         [HttpPost]
         public async Task<IActionResult> AddCategoryAsync([FromBody] CategoryInputModel model)
         {
@@ -34,8 +34,8 @@ namespace LeaderGroupStore.Web.Api.Controllers.Categories
 
             return BadRequest(ModelState);
         }
-        
-        [AllowAnonymous]
+
+        [Authorize(Policy = ("Admin"))]
         [HttpGet]
         public async Task<IActionResult> GetAllCountriesAsync()
         {
@@ -44,7 +44,7 @@ namespace LeaderGroupStore.Web.Api.Controllers.Categories
        
             return Ok(result);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = ("Admin"))]
         [HttpPut]
         public async Task<IActionResult> UpdateCategoryAsync([FromBody] CategoryInputModel model)
         {

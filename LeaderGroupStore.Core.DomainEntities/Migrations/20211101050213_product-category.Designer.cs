@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace LeaderGroupStore.Core.DomainEntities.Migrations.LeaderGroupStore_db
+namespace LeaderGroupStore.Core.DomainEntities.Migrations
 {
     [DbContext(typeof(LeaderGroupStore_dbContext))]
-    [Migration("20211029191849_product")]
-    partial class product
+    [Migration("20211101050213_product-category")]
+    partial class productcategory
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,17 +34,10 @@ namespace LeaderGroupStore.Core.DomainEntities.Migrations.LeaderGroupStore_db
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex(new[] { "Name" }, "UQ_Category_Name")
                         .IsUnique();
-
-                    b.HasIndex(new[] { "ProductId" }, "UQ__Category__B40CC6CCB11C872E")
-                        .IsUnique()
-                        .HasFilter("[ProductId] IS NOT NULL");
 
                     b.ToTable("Category");
                 });
@@ -55,6 +48,9 @@ namespace LeaderGroupStore.Core.DomainEntities.Migrations.LeaderGroupStore_db
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Cost")
                         .HasMaxLength(512)
@@ -72,6 +68,10 @@ namespace LeaderGroupStore.Core.DomainEntities.Migrations.LeaderGroupStore_db
                         .HasColumnType("nvarchar(128)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex(new[] { "CategoryId" }, "UQ__Category__B40CC6CCB11C872E")
+                        .IsUnique()
+                        .HasFilter("[CategoryId] IS NOT NULL");
 
                     b.ToTable("Product");
                 });
@@ -146,19 +146,18 @@ namespace LeaderGroupStore.Core.DomainEntities.Migrations.LeaderGroupStore_db
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("LeaderGroupStore.Core.DomainEntities.Category", b =>
-                {
-                    b.HasOne("LeaderGroupStore.Core.DomainEntities.Product", "Product")
-                        .WithOne("Category")
-                        .HasForeignKey("LeaderGroupStore.Core.DomainEntities.Category", "ProductId")
-                        .HasConstraintName("FK__Category__Produc__300424B4");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("LeaderGroupStore.Core.DomainEntities.Product", b =>
                 {
+                    b.HasOne("LeaderGroupStore.Core.DomainEntities.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId");
+
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("LeaderGroupStore.Core.DomainEntities.Category", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

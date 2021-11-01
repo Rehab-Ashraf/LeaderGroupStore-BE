@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace LeaderGroupStore.Core.DomainEntities.Migrations.LeaderGroupStore_db
+namespace LeaderGroupStore.Core.DomainEntities.Migrations
 {
     [DbContext(typeof(LeaderGroupStore_dbContext))]
     partial class LeaderGroupStore_dbContextModelSnapshot : ModelSnapshot

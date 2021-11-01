@@ -9,10 +9,12 @@ using LeaderGroupStore.Services.Users;
 using LeaderGroupStore.Web.Api.Controllers.Categories;
 using LeaderGroupStore.Web.Api.Controllers.Products;
 using LeaderGroupStore.Web.Api.Controllers.Users;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +23,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace LeaderGroupStore.Web.Api
@@ -61,12 +64,13 @@ namespace LeaderGroupStore.Web.Api
             var connectionString = Configuration.GetConnectionString("LeaderGroupDbConextion");
             services.AddDbContext<LeaderGroupStore_dbContext>(options => options.UseSqlServer(connectionString).EnableSensitiveDataLogging());
             services.AddDbContext<ApplicationDBContext>(options => options.UseSqlServer(connectionString).EnableSensitiveDataLogging());
+            services.AddControllers(options => options.Filters.Add(new AuthorizeFilter()));
             services.AddIdentity<User, IdentityRole>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDBContext>()
                 .AddDefaultTokenProviders();
-
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -85,6 +89,24 @@ namespace LeaderGroupStore.Web.Api
                         ClockSkew = TimeSpan.Zero // remove delay of token when expire
                     };
                 });
+
+            //TODO: <Design> Temp use for release one only.
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policy
+                    => policy.RequireClaim(claimType: "Roles", "Admin"));
+                options.AddPolicy("Manager", policy
+                    => policy.RequireClaim(claimType: "Roles", "Manager"));
+
+                options.AddPolicy("Customer", policy
+                    => policy.RequireClaim(claimType: "Roles", "Customer"));
+            });
+
+
+
+
+
+
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,

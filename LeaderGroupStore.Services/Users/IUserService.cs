@@ -10,5 +10,6 @@ namespace LeaderGroupStore.Services.Users
     {
         Task<IdentityResult> RegisterAsync(User model, string password, string roleId);
         Task<string> LoginAsync(string email, string password);
+        Task<string> Logout();
     }
 }
